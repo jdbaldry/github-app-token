@@ -30,6 +30,9 @@ try {
   const githubApiUrlInput = getInput("github_api_url", { required: true });
   const githubApiUrl = new URL(githubApiUrlInput);
 
+  const organizationInput = getInput("organization");
+  const organization = organizationInput ? organizationInput : undefined;
+
   const installationToken = await fetchInstallationToken({
     appId,
     githubApiUrl,
@@ -38,6 +41,7 @@ try {
     permissions,
     privateKey,
     repo,
+    organization,
   });
 
   setSecret(installationToken);

@@ -10,6 +10,7 @@ export const fetchInstallationToken = async ({
   permissions,
   privateKey,
   repo,
+  organization,
 }: Readonly<{
   appId: string;
   githubApiUrl: URL;
@@ -18,6 +19,7 @@ export const fetchInstallationToken = async ({
   permissions?: Record<string, string>;
   privateKey: string;
   repo: string;
+  organization?: string;
 }>): Promise<string> => {
   const app = createAppAuth({
     appId,
@@ -34,15 +36,28 @@ export const fetchInstallationToken = async ({
   const octokit = getOctokit(authApp.token);
 
   if (installationId === undefined) {
-    try {
-      ({
-        data: { id: installationId },
-      } = await octokit.rest.apps.getRepoInstallation({ owner, repo }));
-    } catch (error: unknown) {
-      throw new Error(
-        "Could not get repo installation. Is the app installed on this repo?",
-        { cause: error },
-      );
+    if (organization === undefined) {
+      try {
+        ({
+          data: { id: installationId },
+        } = await octokit.rest.apps.getRepoInstallation({ owner, repo }));
+      } catch (error: unknown) {
+        throw new Error(
+          "Could not get repo installation. Is the app installed on this repo?",
+          { cause: error },
+        );
+      }
+    } else {
+      try {
+        ({
+          data: { id: installationId },
+        } = await octokit.rest.apps.getOrgInstallation({ org: organization }));
+      } catch (error: unknown) {
+        throw new Error(
+          "Could not get organization installation. Is the app installed on this organization?",
+          { cause: error },
+        );
+      }
     }
   }
 

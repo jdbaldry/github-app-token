@@ -6,7 +6,9 @@ inputs:
     description: ID of the GitHub App.
     required: true
   installation_id:
-    description: The ID of the installation for which the token will be requested (defaults to the ID of the repository's installation).
+    description: |
+      The ID of the installation for which the token will be requested (defaults to the ID of the repository's installation).
+      If the organization input is supplied, the organization's installation ID is used instead of the repository's.
   github_api_url:
     description: The API URL of the GitHub server.
     default: ${{ github.api_url }}
@@ -18,6 +20,10 @@ inputs:
   repository:
     description: The full name of the repository for which the token will be requested.
     default: ${{ github.repository }}
+  organization:
+    description: |
+      The full name of the organization for which the token will be requested.
+      If supplied, the organization's installation ID is used instead of the repository's.
 outputs:
   token:
     description: An installation token for the GitHub App on the requested repository.
